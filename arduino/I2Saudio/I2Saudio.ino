@@ -31,8 +31,10 @@
 
 Audio audio;
 WiFiMulti wifiMulti;
-String ssid =     "ooozone";
-String password = "aa12345269";
+// String ssid =     "ooozone";
+// String password = "aa12345269"; // dorm
+String ssid =     "R";
+String password = "ryanryan"; // phone 
 
 
 void setup() {
@@ -49,6 +51,16 @@ void setup() {
         WiFi.disconnect(true);
         wifiMulti.run();
     }
+
+    Serial.print("Connecting to WiFi");
+    while (WiFi.status() != WL_CONNECTED) {
+      Serial.print(".");
+      delay(500);
+    }
+    Serial.println();
+    Serial.print("My IP address: ");
+    Serial.println(WiFi.localIP());
+
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
     audio.setVolume(12); // 0...21
 
@@ -57,7 +69,8 @@ void setup() {
 //    audio.connecttohost("http://somafm.com/wma128/missioncontrol.asx"); //  asx
 //    audio.connecttohost("http://mp3.ffh.de/radioffh/hqlivestream.aac"); //  128k aac
       //audio.connecttohost("http://mp3.ffh.de/radioffh/hqlivestream.mp3"); //  128k mp3
-      audio.connecttohost("http://192.168.0.105:8000/Guns.mp3");
+      Serial.println("http://172.20.10.3:8000/Guns.mp3");
+      audio.connecttohost("http://172.20.10.3:8000/Guns.mp3");
 }
 
 void loop(){

@@ -1,0 +1,8 @@
+cmd:
+cd LockServer
+python -m http.server 8000 --bind 0.0.0.0
+
+other devices:
+http://192.168.x.x:8000/Guns.mp3
+
+wifi 記得改私人網路
