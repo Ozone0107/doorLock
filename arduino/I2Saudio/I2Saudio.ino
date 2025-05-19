@@ -33,7 +33,7 @@ Audio audio;
 WiFiMulti wifiMulti;
 // String ssid =     "ooozone";
 // String password = "aa12345269"; // dorm
-String ssid =     "R";
+String ssid =     "Ryan";
 String password = "ryanryan"; // phone 
 
 
@@ -68,9 +68,9 @@ void setup() {
 //    audio.connecttohost("http://www.wdr.de/wdrlive/media/einslive.m3u");
 //    audio.connecttohost("http://somafm.com/wma128/missioncontrol.asx"); //  asx
 //    audio.connecttohost("http://mp3.ffh.de/radioffh/hqlivestream.aac"); //  128k aac
-      //audio.connecttohost("http://mp3.ffh.de/radioffh/hqlivestream.mp3"); //  128k mp3
-      Serial.println("http://172.20.10.3:8000/Guns.mp3");
-      audio.connecttohost("http://172.20.10.3:8000/Guns.mp3");
+      audio.connecttohost("http://mp3.ffh.de/radioffh/hqlivestream.mp3"); //  128k mp3
+      //Serial.println("http://172.20.10.4:8000/Guns.mp3");
+      //audio.connecttohost("http://172.20.10.4:8000/Guns.mp3");
 }
 
 void loop(){
