@@ -53,9 +53,12 @@ for filename in os.listdir(UNKNOWN_DIR):
         print(f"[MQTT] Published {cmd} to {MQTT_TOPIC}")
 
         # 畫框顯示
-        cv2.rectangle(image, (left, top), (right, bottom), (0,255,0), 2)
+
+        color = (0,255,0) if name != "Unknown" else (0, 0, 255)
+        
+        cv2.rectangle(image, (left, top), (right, bottom), color, 2)
         cv2.putText(image, name, (left, top-10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
         print(f"偵測到 {name}")
         print(distances[best_idx])
 
