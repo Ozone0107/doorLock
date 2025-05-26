@@ -10,7 +10,7 @@ import paho.mqtt.client as mqtt
 # ———— 設定區 ————
 CACHE_PATH  = "known_faces_cache.pkl"
 UNKNOWN_DIR = "verify"
-THRESHOLD   = 0.6
+THRESHOLD   = 0.45
 
 MQTT_BROKER = "test.mosquitto.org"
 MQTT_PORT   = 1883
@@ -87,10 +87,11 @@ while True:
 
             cv2.imshow(filename, image)
             # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
+            cv2.waitKey(3000)
+            cv2.destroyAllWindows()
 
-            if cv2.waitKey(1000) & 0xFF == ord('q'):
-                break     
+            #if cv2.waitKey(1000) & 0xFF == ord('q'):
+               # break     
 
             if not client.is_connected():
                 client.reconnect()
@@ -99,5 +100,6 @@ while True:
             print("HTTP", resp.status_code)
     except Exception as e:
         print("Error:", e)
-    time.sleep(5)  # 每過5秒拍一張
-
+    time.sleep(4)  # 每過4秒拍一張
+    #rrr
+    #操
