@@ -103,3 +103,4 @@ while True:
     time.sleep(4)  # 每過4秒拍一張
     #rrr
     #操
+
