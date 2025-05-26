@@ -5,7 +5,8 @@ import os
 # ESP32-CAM 的 AP 模式或 STA IP
 ESP_IP = "172.20.10.2"        # 看你們的serial monitor上是什麼
 URL    = f"http://{ESP_IP}/capture"
-SAVE_DIR = r"C:\Users\User\Documents\GitHub\doorLock\verify" #我直接存在verify裡面
+#SAVE_DIR = r"C:\Users\User\Documents\GitHub\doorLock\verify" #我直接存在verify裡面
+SAVE_DIR = "verify" #應該可以直接這樣寫
 
 os.makedirs(SAVE_DIR, exist_ok=True)
 

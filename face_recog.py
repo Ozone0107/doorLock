@@ -44,3 +44,6 @@ for filename in os.listdir(UNKNOWN_DIR):
     cv2.imshow(filename, image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+client.loop_stop()
+client.disconnect()
