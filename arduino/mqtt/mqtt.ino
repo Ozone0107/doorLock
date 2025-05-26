@@ -19,6 +19,8 @@ const char *topic = "face/motor/control";
 // const char *mqtt_password = "public";
 const int mqtt_port = 1883;
 
+bool isLocked = 1;
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -85,16 +87,23 @@ void callback(char *topic, byte *payload, unsigned int length) {
     Serial.print((char) payload[0]);
     Serial.println();
     Serial.println("-----------------------");
-    if((char) payload[0]=='1'){
+    if((char) payload[0]=='1' && isLocked){ //解鎖
       digitalWrite(AIN1_PIN, HIGH);
       digitalWrite(AIN2_PIN, LOW);
       analogWrite(PWMA_PIN, 200);  // 0–255 之間 (約 70%)
       delay(3000);
-    }else if((char) payload[0]=='0'){
+      digitalWrite(AIN1_PIN, LOW);
+      digitalWrite(AIN2_PIN, LOW);
+      analogWrite(PWMA_PIN, 0);  // 0–255 之間 (約 70%)
+      isLocked = 0;
+    }
+    /*
+    else if((char) payload[0]=='0'){ 
       digitalWrite(AIN1_PIN, LOW);
       digitalWrite(AIN2_PIN, LOW);
       analogWrite(PWMA_PIN, 0);
     }
+    */
 }
 
 void loop() {
