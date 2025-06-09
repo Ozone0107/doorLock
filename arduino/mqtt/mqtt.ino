@@ -3,11 +3,18 @@
 #include <Arduino.h>
 
 
-// 這組腳位很屌，可以work，換之前再想一下
-#define AIN1_PIN    2   // 方向腳 1
-#define AIN2_PIN   13   // 方向腳 2
-#define PWMA_PIN   14   // PWM 腳
-#define STBY_PIN   0
+// 這組腳位很屌，可以work，換之前再想一下(for esp32cam)
+// #define AIN1_PIN    2   // 方向腳 1
+// #define AIN2_PIN   13   // 方向腳 2
+// #define PWMA_PIN   14   // PWM 腳
+// #define STBY_PIN   0
+
+// for esp wroom 32
+#define STBY_PIN   13  // D13
+#define AIN1_PIN   14  // D14
+#define AIN2_PIN   27  // D27
+#define PWMA_PIN   26  // D26
+
 // WiFi
 const char *ssid = "Ryan"; // Enter your Wi-Fi name
 const char *password = "ryanryan";  // Enter Wi-Fi password

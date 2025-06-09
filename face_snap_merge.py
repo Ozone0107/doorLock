@@ -102,5 +102,3 @@ while True:
         print("Error:", e)
     time.sleep(4)  # 每過4秒拍一張
     #rrr
-    #操
-

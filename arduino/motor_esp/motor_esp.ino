@@ -1,19 +1,31 @@
 #include <Arduino.h>
 
-// TB6612FNG A 通道腳位
-//#define STBY_PIN   13   // 使能腳 (Standby)，拉高啟用
-#define AIN1_PIN    2   // 方向腳 1
-#define AIN2_PIN   15   // 方向腳 2
-#define PWMA_PIN   16   // PWM 腳
-#define STBY_PIN   1
+
+// 這組腳位很屌，可以work，換之前再想一下
+// #define AIN1_PIN    2   // 方向腳 1
+// #define AIN2_PIN   13   // 方向腳 2
+// #define PWMA_PIN   14   // PWM 腳
+// #define STBY_PIN   0
+
+#define STBY_PIN   13  // D13
+#define AIN1_PIN   14  // D14
+#define AIN2_PIN   27  // D27
+#define PWMA_PIN   26  // D26
+
+#define BUTTON_PIN 25
 
 void setup() {
   // 初始化腳位
-  pinMode(STBY_PIN, OUTPUT);
-  digitalWrite(STBY_PIN, LOW);
-  pinMode(AIN1_PIN, OUTPUT);
-  pinMode(AIN2_PIN, OUTPUT);
-  pinMode(PWMA_PIN, OUTPUT);
+    pinMode(AIN1_PIN, OUTPUT);
+    pinMode(AIN2_PIN, OUTPUT);
+    pinMode(PWMA_PIN, OUTPUT);
+    pinMode(STBY_PIN, OUTPUT);
+    digitalWrite(AIN1_PIN, LOW);
+    digitalWrite(AIN2_PIN, LOW);
+    analogWrite(PWMA_PIN, 0);
+    digitalWrite(STBY_PIN, HIGH);
+  
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   //使能 TB6612，啟用 A/B 通道輸出
 //   digitalWrite(STBY_PIN, LOW);
@@ -32,12 +44,25 @@ void setup() {
  }
 
 void loop() {
-  // 範例：馬達正轉 70% 速度，持續 2 秒
+  //範例：馬達正轉 70% 速度，持續 2 秒
+if (digitalRead(BUTTON_PIN) == LOW){
+  // 開鎖
+  digitalWrite(AIN1_PIN, HIGH);
+  digitalWrite(AIN2_PIN, LOW);
+  analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
+  delay(170);
+  analogWrite(PWMA_PIN, 0);
+  delay(1000);
+};
+
+
+//delay(1000);
+
+
   // digitalWrite(AIN1_PIN, HIGH);
   // digitalWrite(AIN2_PIN, LOW);
   // analogWrite(PWMA_PIN, 200);  // 0–255 之間 (約 70%)
   // delay(3000);
-
   // // 範例：馬達反轉 50% 速度，持續 2 秒
   // digitalWrite(AIN1_PIN, LOW);
   // digitalWrite(AIN2_PIN, HIGH);
