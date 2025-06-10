@@ -7,12 +7,37 @@
 // #define PWMA_PIN   14   // PWM 腳
 // #define STBY_PIN   0
 
+// #define STBY_PIN   13  // D13
+// #define AIN1_PIN   14  // D14
+// #define AIN2_PIN   27  // D27
+// #define PWMA_PIN   26  // D26
+
+// #define BUTTON_PIN 25
+
+//works
+
 #define STBY_PIN   13  // D13
 #define AIN1_PIN   14  // D14
-#define AIN2_PIN   27  // D27
-#define PWMA_PIN   26  // D26
+#define AIN2_PIN   32  // D27
+#define PWMA_PIN   33  // D26
 
-#define BUTTON_PIN 25
+#define BUTTON_PIN 12
+
+void unlock() {
+    digitalWrite(AIN1_PIN, HIGH);
+    digitalWrite(AIN2_PIN, LOW);
+    analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
+    delay(170);
+    analogWrite(PWMA_PIN, 0);   
+}
+
+void lock() {
+    digitalWrite(AIN1_PIN, LOW);
+    digitalWrite(AIN2_PIN, HIGH);
+    analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
+    delay(170);
+    analogWrite(PWMA_PIN, 0);   
+}
 
 void setup() {
   // 初始化腳位
@@ -47,11 +72,7 @@ void loop() {
   //範例：馬達正轉 70% 速度，持續 2 秒
 if (digitalRead(BUTTON_PIN) == LOW){
   // 開鎖
-  digitalWrite(AIN1_PIN, HIGH);
-  digitalWrite(AIN2_PIN, LOW);
-  analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
-  delay(170);
-  analogWrite(PWMA_PIN, 0);
+  lock();
   delay(1000);
 };
 

@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import face_recognition
 import paho.mqtt.client as mqtt
+from playsound import playsound
 
 # ———— 設定區 ————
 CACHE_PATH  = "known_faces_cache.pkl"
@@ -30,7 +31,7 @@ client.loop_start()
 
 
 # ESP32-CAM 的 AP 模式或 STA IP
-ESP_IP = "172.20.10.2"        # 看你們的serial monitor上是什麼
+ESP_IP = "192.168.10.35"        # 看你們的serial monitor上是什麼
 URL    = f"http://{ESP_IP}/capture"
 #SAVE_DIR = r"C:\Users\User\Documents\GitHub\doorLock\verify" #我直接存在verify裡面
 SAVE_DIR = "verify" #應該可以直接這樣寫
@@ -38,6 +39,7 @@ SAVE_DIR = "verify" #應該可以直接這樣寫
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 idx = 0
+fail = 0
 while True:
     try:
         resp = requests.get(URL, timeout=5)
@@ -67,9 +69,17 @@ while True:
 
                 if best_dist <= THRESHOLD:
                     name = known_names[best_idx]
-                    cmd = "1"   # Known → 轉動馬達
+                    cmd = "1"   
+                    playsound("familymart.wav", block=False)
+                    fail = 0
+                    
                 else:
-                    cmd = "0"   # Unknown → 停止馬達
+                    fail = fail + 1
+                    cmd = "0"
+                    if fail == 2:
+                        playsound("Why are you Gay.wav", block=False)
+                    if fail >= 3:
+                        playsound("u r gay.wav", block=False)
 
                 # 發佈 MQTT
                 client.publish(MQTT_TOPIC, payload=cmd, qos=0, retain=False)
@@ -100,5 +110,5 @@ while True:
             print("HTTP", resp.status_code)
     except Exception as e:
         print("Error:", e)
-    time.sleep(4)  # 每過4秒拍一張
+    time.sleep(3)  # 每過4秒拍一張
     #rrr

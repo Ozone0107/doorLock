@@ -1,6 +1,9 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Arduino.h>
+#include "ESP_I2S.h"
+#include "BluetoothA2DPSink.h"
+
 
 
 // 這組腳位很屌，可以work，換之前再想一下(for esp32cam)
@@ -12,12 +15,28 @@
 // for esp wroom 32
 #define STBY_PIN   13  // D13
 #define AIN1_PIN   14  // D14
-#define AIN2_PIN   27  // D27
-#define PWMA_PIN   26  // D26
+#define AIN2_PIN   32  // D27
+#define PWMA_PIN   33  // D26
+
+#define BUTTON_PIN 12
+
+const uint8_t I2S_SCK = 27;       /* Audio data bit clock */
+const uint8_t I2S_WS = 26;       /* Audio data left and right clock */
+const uint8_t I2S_SDOUT = 25;    /* ESP32 audio data output (to speakers) */
+I2SClass i2s;
+
+
+BluetoothA2DPSink a2dp_sink(i2s);
 
 // WiFi
-const char *ssid = "Ryan"; // Enter your Wi-Fi name
-const char *password = "ryanryan";  // Enter Wi-Fi password
+// const char *ssid = "Ryan"; // Enter your Wi-Fi name
+// const char *password = "ryanryan";  // Enter Wi-Fi password
+
+// const char *ssid = "ooozone"; // Enter your Wi-Fi name
+// const char *password = "aa12345269";  // Enter Wi-Fi password
+
+const char *ssid = "makerspace-2.4G"; // Enter your Wi-Fi name
+const char *password = "ntueemakerspace";  // Enter Wi-Fi password
 
 // MQTT Broker
 const char *mqtt_broker = "test.mosquitto.org";
@@ -31,6 +50,22 @@ bool isLocked = 1;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+void unlock() {
+    digitalWrite(AIN1_PIN, HIGH);
+    digitalWrite(AIN2_PIN, LOW);
+    analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
+    delay(170);
+    analogWrite(PWMA_PIN, 0);   
+}
+
+void lock() {
+    digitalWrite(AIN1_PIN, LOW);
+    digitalWrite(AIN2_PIN, HIGH);
+    analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
+    delay(170);
+    analogWrite(PWMA_PIN, 0);   
+}
+
 void setup() {
 
     //pinMode(STBY_PIN, OUTPUT);
@@ -40,6 +75,14 @@ void setup() {
     // pinMode(PWMA_PIN, OUTPUT);
     //digitalWrite(STBY_PIN, HIGH);
     // Set software serial baud to 115200;
+
+    i2s.setPins(I2S_SCK, I2S_WS, I2S_SDOUT);
+    if (!i2s.begin(I2S_MODE_STD, 44100, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO, I2S_STD_SLOT_BOTH)) {
+      Serial.println("Failed to initialize I2S!");
+      while (1); // do nothing
+    }
+
+    a2dp_sink.start("MySpeaker");
 
     Serial.begin(115200);
     // Connecting to a WiFi network
@@ -83,6 +126,8 @@ void setup() {
     analogWrite(PWMA_PIN, 0);
     digitalWrite(STBY_PIN, HIGH);
   
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+  
 }
 
 
@@ -94,16 +139,14 @@ void callback(char *topic, byte *payload, unsigned int length) {
     Serial.print((char) payload[0]);
     Serial.println();
     Serial.println("-----------------------");
-    if((char) payload[0]=='1' && isLocked){ //解鎖
-      digitalWrite(AIN1_PIN, HIGH);
-      digitalWrite(AIN2_PIN, LOW);
-      analogWrite(PWMA_PIN, 200);  // 0–255 之間 (約 70%)
-      delay(3000);
-      digitalWrite(AIN1_PIN, LOW);
-      digitalWrite(AIN2_PIN, LOW);
-      analogWrite(PWMA_PIN, 0);  // 0–255 之間 (約 70%)
-      isLocked = 0;
+
+    if((char) payload[0]=='1'){
+        unlock();
+        delay(7000);
+        lock();
+        delay(1000);
     }
+    
     /*
     else if((char) payload[0]=='0'){ 
       digitalWrite(AIN1_PIN, LOW);
@@ -115,4 +158,15 @@ void callback(char *topic, byte *payload, unsigned int length) {
 
 void loop() {
     client.loop();
+    if(digitalRead(BUTTON_PIN) == LOW){
+        unlock();
+        delay(7000);
+        lock();
+        delay(1000);
+    }
 }
+
+
+
+
+

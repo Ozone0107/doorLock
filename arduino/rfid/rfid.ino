@@ -7,8 +7,12 @@
 // const char* ssid = "Ryan";
 // const char* password = "ryanryan";
 
+// const char* ssid = "makerspace-2.4G";
+// const char* password = "ntueemakerspace";
+
 const char* ssid = "ooozone";
 const char* password = "aa12345269";
+
 
 // MQTT 設定
 const char* mqtt_server = "test.mosquitto.org";
@@ -16,11 +20,17 @@ const char* topic_uid = "rfid/uid";
 const char* topic_status = "rfid/status";
 
 // MFRC522 接腳
-#define PIN_SCK   13
-#define PIN_MOSI  15
-#define PIN_MISO  14
-#define PIN_SS    12
-#define PIN_RST   0
+// #define PIN_SCK   18
+// #define PIN_MOSI  23
+// #define PIN_MISO  19
+// #define PIN_SS    5
+// #define PIN_RST   15
+
+#define PIN_MISO        12
+#define PIN_MOSI        13
+#define PIN_SCK         14
+#define PIN_SS          15
+#define PIN_RST         16
 
 
 MFRC522 mfrc522(PIN_SS, PIN_RST);
@@ -79,11 +89,13 @@ void reconnectMQTT() {
 }
 
 void setup() {
+  delay(2000);
   Serial.begin(115200);
   SPI.begin(PIN_SCK, PIN_MISO, PIN_MOSI, PIN_SS);
   //SPI.begin();         // 預設 SPI 腳位 (18, 19, 23)
-  delay(100);
+
   mfrc522.PCD_Init();  // 初始化 RFID
+  delay(100);
   connectWiFi();
 
   client.setServer(mqtt_server, 1883);
@@ -93,25 +105,44 @@ void setup() {
 }
 
 void loop() {
-
-  mfrc522.PCD_Init();  // 初始化 RFID
-  if (!client.connected()) reconnectMQTT();
   client.loop();
 
-  if (!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial()) return;
+  // 调试：每秒打印一次心跳
+  static unsigned long last = 0;
+  if (millis() - last > 1000) {
+    last = millis();
+    //Serial.println("⏱ loop heartbeat");
+  }
 
-  byte *uid = mfrc522.uid.uidByte;
-  byte uidSize = mfrc522.uid.size;
-  String uidStr = formatUID(uid, uidSize);
+  // 1) 检测新卡
+  if (!mfrc522.PICC_IsNewCardPresent()) {
+    //Serial.println("…no card…");
+    delay(100);
+    return;
+  }
+  Serial.println("✔ Card present");
+ 
 
-  Serial.print("UID: "); Serial.println(uidStr);
+  // 2) 读序列号
+  if (!mfrc522.PICC_ReadCardSerial()) {
+    Serial.println("✖ Read card serial failed");
+    delay(100);
+    return;
+  }
+  Serial.println("✔ Read serial OK");
+
+  // 3) 格式化 UID
+  String uidStr = formatUID(mfrc522.uid.uidByte, mfrc522.uid.size);
+  Serial.println("📀 UID: " + uidStr);
+
+  // 4) 发布到 MQTT
   client.publish(topic_uid, uidStr.c_str());
+  Serial.println("📡 Published UID");
 
-  String result = isUIDAllowed(uid) ? "ALLOW" : "DENY";
+  String result = isUIDAllowed(mfrc522.uid.uidByte) ? "ALLOW" : "DENY";
   client.publish(topic_status, result.c_str());
-  Serial.println("Status: " + result);
+  Serial.println("🔔 Published status: " + result);
 
-  mfrc522.PICC_HaltA();  // 停止卡片通訊
+  mfrc522.PICC_HaltA();
   delay(2000);
-
 }

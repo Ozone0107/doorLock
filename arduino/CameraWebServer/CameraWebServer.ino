@@ -36,8 +36,11 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char *ssid = "Ryan";
-const char *password = "ryanryan";
+// const char *ssid = "Ryan";
+// const char *password = "ryanryan";
+
+const char *ssid = "makerspace-2.4G";
+const char *password = "ntueemakerspace";
 
 void startCameraServer();
 void setupLedFlash(int pin);
@@ -109,6 +112,9 @@ void setup() {
 
   sensor_t *s = esp_camera_sensor_get();
   // initial sensors are flipped vertically and colors are a bit saturated
+    
+  s->set_vflip(s, 1); 
+  
   if (s->id.PID == OV3660_PID) {
     s->set_vflip(s, 1);        // flip it back
     s->set_brightness(s, 1);   // up the brightness just a bit
