@@ -42,6 +42,9 @@
 const char *ssid = "makerspace-2.4G";
 const char *password = "ntueemakerspace";
 
+// const char *ssid = "ooozone";
+// const char *password = "aa12345269";
+
 void startCameraServer();
 void setupLedFlash(int pin);
 
@@ -114,7 +117,7 @@ void setup() {
   // initial sensors are flipped vertically and colors are a bit saturated
     
   s->set_vflip(s, 1); 
-  
+
   if (s->id.PID == OV3660_PID) {
     s->set_vflip(s, 1);        // flip it back
     s->set_brightness(s, 1);   // up the brightness just a bit

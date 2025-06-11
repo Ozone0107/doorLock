@@ -27,7 +27,7 @@ void unlock() {
     digitalWrite(AIN1_PIN, HIGH);
     digitalWrite(AIN2_PIN, LOW);
     analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
-    delay(170);
+    delay(143);
     analogWrite(PWMA_PIN, 0);   
 }
 
@@ -35,7 +35,7 @@ void lock() {
     digitalWrite(AIN1_PIN, LOW);
     digitalWrite(AIN2_PIN, HIGH);
     analogWrite(PWMA_PIN, 220);  // 0–255 之間 (約 70%)
-    delay(170);
+    delay(150);
     analogWrite(PWMA_PIN, 0);   
 }
 
@@ -72,8 +72,11 @@ void loop() {
   //範例：馬達正轉 70% 速度，持續 2 秒
 if (digitalRead(BUTTON_PIN) == LOW){
   // 開鎖
+  unlock();
+  delay(4000);
   lock();
   delay(1000);
+  //lock();
 };
 
 

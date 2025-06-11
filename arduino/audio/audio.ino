@@ -15,6 +15,6 @@ void setup() {
       while (1); // do nothing
     }
 
-    a2dp_sink.start("MyMusic");
+    a2dp_sink.start("MySpeaker");
 }
 void loop() {}
